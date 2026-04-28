@@ -3,8 +3,8 @@ package com.apps.quantitymeasurement;
 import java.util.Objects;
 
 /**
- * QuantityMeasurementApp handles active unit-to-unit conversions.
- * UC5: Implements explicit conversion operations between length units.
+ * QuantityMeasurementApp handles arithmetic operations between quantities.
+ * UC6: Enables adding two lengths and returning the result in the first unit.
  */
 public class QuantityMeasurementApp {
 
@@ -12,7 +12,7 @@ public class QuantityMeasurementApp {
         FEET(12.0),
         INCHES(1.0),
         YARD(36.0),
-        CENTIMETER(0.393701); // Updated to precise factor as per UC5 [cite: 1311]
+        CENTIMETER(0.393701);
 
         private final double conversionFactor;
 
@@ -35,26 +35,46 @@ public class QuantityMeasurementApp {
         }
 
         /**
-         * Private helper to normalize values to the base unit (inches) with rounding.
-         * [cite: 850, 1021, 1025]
+         * Private helper to normalize values to the base unit (inches). [cite: 1704]
          */
         private double convertToBaseUnit() {
-            double rawInches = this.value * this.unit.getConversionFactor();
-            return Math.round(rawInches * 100.0) / 100.0; // Round to 2 decimal places [cite: 933]
+            return this.value * this.unit.getConversionFactor();
         }
 
         /**
-         * Converts this instance to a new unit.
-         * [cite: 953, 1113]
+         * Private helper to convert from the base unit (inches) to a target unit.
+         * Centralizes rounding logic to two decimal places. [cite: 1761]
+         */
+        private double convertFromBaseToTargetUnit(double lengthInInches, LengthUnit targetUnit) {
+            double convertedValue = lengthInInches / targetUnit.getConversionFactor();
+            return Math.round(convertedValue * 100.0) / 100.0;
+        }
+
+        /**
+         * Converts this instance to a new unit. [cite: 1704]
          */
         public Length convertTo(LengthUnit targetUnit) {
-            if (targetUnit == null) {
-                throw new IllegalArgumentException("Target unit cannot be null"); // [cite: 1107]
-            }
-            double inches = this.value * this.unit.getConversionFactor();
-            double convertedValue = inches / targetUnit.getConversionFactor();
-            double roundedValue = Math.round(convertedValue * 100.0) / 100.0;
-            return new Length(roundedValue, targetUnit); // Return new instance [cite: 1101]
+            if (targetUnit == null) throw new IllegalArgumentException("Target unit cannot be null");
+            double inches = convertToBaseUnit();
+            double roundedValue = convertFromBaseToTargetUnit(inches, targetUnit);
+            return new Length(roundedValue, targetUnit);
+        }
+
+        /**
+         * Adds another length to the current length.
+         * The result is returned in the unit of this instance. [cite: 1714-1723]
+         */
+        public Length add(Length thatLength) {
+            if (thatLength == null) throw new IllegalArgumentException("Operand cannot be null");
+
+            // 1. Convert both to base unit (inches)
+            double sumInInches = this.convertToBaseUnit() + thatLength.convertToBaseUnit();
+
+            // 2. Convert sum back to the unit of the first operand (this instance)
+            double summedValue = convertFromBaseToTargetUnit(sumInInches, this.unit);
+
+            // 3. Return new immutable Length instance
+            return new Length(summedValue, this.unit);
         }
 
         @Override
@@ -62,51 +82,40 @@ public class QuantityMeasurementApp {
             if (this == obj) return true;
             if (obj == null || getClass() != obj.getClass()) return false;
             Length that = (Length) obj;
-            return Double.compare(this.convertToBaseUnit(), that.convertToBaseUnit()) == 0;
+            // Round base values for deterministic comparison [cite: 1704]
+            double thisBase = Math.round(this.convertToBaseUnit() * 100.0) / 100.0;
+            double thatBase = Math.round(that.convertToBaseUnit() * 100.0) / 100.0;
+            return Double.compare(thisBase, thatBase) == 0;
         }
 
         @Override
         public String toString() {
-            return String.format("%.2f %s", value, unit); // [cite: 1125]
+            return String.format("%.2f %s", value, unit);
         }
     }
 
     // --- API Demonstration Methods ---
 
     public static boolean demonstrateLengthEquality(Length l1, Length l2) {
-        boolean result = Objects.equals(l1, l2);
-        System.out.println("Comparing " + l1 + " to " + l2 + " -> Equal: " + result);
-        return result;
+        return Objects.equals(l1, l2);
     }
 
     /**
-     * Overloaded method for raw values [cite: 874]
+     * Demonstrates addition of two QuantityLength instances. [cite: 1835]
      */
-    public static Length demonstrateLengthConversion(double value, LengthUnit from, LengthUnit to) {
-        Length length = new Length(value, from);
-        return length.convertTo(to);
-    }
-
-    /**
-     * Overloaded method for existing objects [cite: 880]
-     */
-    public static Length demonstrateLengthConversion(Length length, LengthUnit to) {
-        return length.convertTo(to);
+    public static Length demonstrateLengthAddition(Length length1, Length length2) {
+        return length1.add(length2);
     }
 
     public static void main(String[] args) {
-        System.out.println("UC5 Conversion Demonstrations:");
+        System.out.println("UC6 Addition Demonstrations:");
 
-        // 1.0 Feet to Inches [cite: 1281]
-        Length inches = demonstrateLengthConversion(1.0, LengthUnit.FEET, LengthUnit.INCHES);
-        System.out.println("1.0 FEET -> " + inches);
+        // 1.0 Foot + 12.0 Inches = 2.0 Feet [cite: 1848-1849]
+        Length f1 = new Length(1.0, LengthUnit.FEET);
+        Length i12 = new Length(12.0, LengthUnit.INCHES);
+        System.out.println(f1 + " + " + i12 + " = " + demonstrateLengthAddition(f1, i12));
 
-        // 3.0 Yards to Feet [cite: 1282]
-        Length feet = demonstrateLengthConversion(3.0, LengthUnit.YARD, LengthUnit.FEET);
-        System.out.println("3.0 YARDS -> " + feet);
-
-        // 1.0 Centimeter to Inches [cite: 1286]
-        Length cmToInches = demonstrateLengthConversion(1.0, LengthUnit.CENTIMETER, LengthUnit.INCHES);
-        System.out.println("1.0 CENTIMETER -> " + cmToInches);
+        // 12.0 Inches + 1.0 Foot = 24.0 Inches [cite: 1850-1851]
+        System.out.println(i12 + " + " + f1 + " = " + demonstrateLengthAddition(i12, f1));
     }
 }
