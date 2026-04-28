@@ -3,8 +3,8 @@ package com.apps.quantitymeasurement;
 import java.util.Objects;
 
 /**
- * QuantityMeasurementApp handles arithmetic operations between quantities.
- * UC6: Enables adding two lengths and returning the result in the first unit.
+ * QuantityMeasurementApp handles advanced arithmetic with target unit specification.
+ * UC7: Allows adding two lengths and explicitly defining the result unit.
  */
 public class QuantityMeasurementApp {
 
@@ -34,47 +34,40 @@ public class QuantityMeasurementApp {
             this.unit = unit;
         }
 
-        /**
-         * Private helper to normalize values to the base unit (inches). [cite: 1704]
-         */
         private double convertToBaseUnit() {
             return this.value * this.unit.getConversionFactor();
         }
 
-        /**
-         * Private helper to convert from the base unit (inches) to a target unit.
-         * Centralizes rounding logic to two decimal places. [cite: 1761]
-         */
         private double convertFromBaseToTargetUnit(double lengthInInches, LengthUnit targetUnit) {
             double convertedValue = lengthInInches / targetUnit.getConversionFactor();
-            return Math.round(convertedValue * 100.0) / 100.0;
+            return Math.round(convertedValue * 1000.0) / 1000.0; // Increased precision for Yards
         }
 
         /**
-         * Converts this instance to a new unit. [cite: 1704]
+         * Private utility to sum two lengths and convert to a target unit.
+         * Prevents code duplication between overloaded add methods[cite: 2315, 2317].
          */
-        public Length convertTo(LengthUnit targetUnit) {
-            if (targetUnit == null) throw new IllegalArgumentException("Target unit cannot be null");
-            double inches = convertToBaseUnit();
-            double roundedValue = convertFromBaseToTargetUnit(inches, targetUnit);
-            return new Length(roundedValue, targetUnit);
+        private Length addAndConvert(Length thatLength, LengthUnit targetUnit) {
+            if (thatLength == null || targetUnit == null) {
+                throw new IllegalArgumentException("Operand and target unit cannot be null");
+            }
+            double sumInInches = this.convertToBaseUnit() + thatLength.convertToBaseUnit();
+            double summedValue = convertFromBaseToTargetUnit(sumInInches, targetUnit);
+            return new Length(summedValue, targetUnit);
         }
 
         /**
-         * Adds another length to the current length.
-         * The result is returned in the unit of this instance. [cite: 1714-1723]
+         * UC6: Addition defaulting to the unit of the first operand.
          */
         public Length add(Length thatLength) {
-            if (thatLength == null) throw new IllegalArgumentException("Operand cannot be null");
+            return addAndConvert(thatLength, this.unit);
+        }
 
-            // 1. Convert both to base unit (inches)
-            double sumInInches = this.convertToBaseUnit() + thatLength.convertToBaseUnit();
-
-            // 2. Convert sum back to the unit of the first operand (this instance)
-            double summedValue = convertFromBaseToTargetUnit(sumInInches, this.unit);
-
-            // 3. Return new immutable Length instance
-            return new Length(summedValue, this.unit);
+        /**
+         * UC7: Addition with explicit target unit specification.
+         */
+        public Length add(Length thatLength, LengthUnit targetUnit) {
+            return addAndConvert(thatLength, targetUnit);
         }
 
         @Override
@@ -82,7 +75,6 @@ public class QuantityMeasurementApp {
             if (this == obj) return true;
             if (obj == null || getClass() != obj.getClass()) return false;
             Length that = (Length) obj;
-            // Round base values for deterministic comparison [cite: 1704]
             double thisBase = Math.round(this.convertToBaseUnit() * 100.0) / 100.0;
             double thatBase = Math.round(that.convertToBaseUnit() * 100.0) / 100.0;
             return Double.compare(thisBase, thatBase) == 0;
@@ -90,32 +82,27 @@ public class QuantityMeasurementApp {
 
         @Override
         public String toString() {
-            return String.format("%.2f %s", value, unit);
+            return String.format("%.3f %s", value, unit);
         }
     }
 
     // --- API Demonstration Methods ---
 
-    public static boolean demonstrateLengthEquality(Length l1, Length l2) {
-        return Objects.equals(l1, l2);
-    }
-
-    /**
-     * Demonstrates addition of two QuantityLength instances. [cite: 1835]
-     */
-    public static Length demonstrateLengthAddition(Length length1, Length length2) {
-        return length1.add(length2);
+    public static Length demonstrateLengthAddition(Length length1, Length length2, LengthUnit targetUnit) {
+        return length1.add(length2, targetUnit);
     }
 
     public static void main(String[] args) {
-        System.out.println("UC6 Addition Demonstrations:");
+        System.out.println("UC7 Addition Demonstrations:");
 
-        // 1.0 Foot + 12.0 Inches = 2.0 Feet [cite: 1848-1849]
+        // 1.0 Foot + 12.0 Inches with Target unit YARDS -> 0.667 YARDS [cite: 2103, 2293]
         Length f1 = new Length(1.0, LengthUnit.FEET);
         Length i12 = new Length(12.0, LengthUnit.INCHES);
-        System.out.println(f1 + " + " + i12 + " = " + demonstrateLengthAddition(f1, i12));
+        System.out.println(f1 + " + " + i12 + " (Target YARDS) = " +
+                demonstrateLengthAddition(f1, i12, LengthUnit.YARD));
 
-        // 12.0 Inches + 1.0 Foot = 24.0 Inches [cite: 1850-1851]
-        System.out.println(i12 + " + " + f1 + " = " + demonstrateLengthAddition(i12, f1));
+        // 1.0 FEET + 12.0 INCHES with Target unit INCHES -> 24.0 INCHES [cite: 2292]
+        System.out.println(f1 + " + " + i12 + " (Target INCHES) = " +
+                f1.add(i12, LengthUnit.INCHES));
     }
 }

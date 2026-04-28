@@ -8,56 +8,48 @@ import com.apps.quantitymeasurement.QuantityMeasurementApp.LengthUnit;
 public class QuantityMeasurementAppTest {
 
     @Test
-    public void addFeetAndInches() {
-        // 1.0 feet + 12.0 inches = 2.0 feet [cite: 2027-2037]
+    public void addFeetAndInchesWithTargetUnitInches() {
+        // 1.0 FEET + 12.0 INCHES (Target INCHES) = 24.0 INCHES [cite: 2410, 2497]
         Length length1 = new Length(1.0, LengthUnit.FEET);
         Length length2 = new Length(12.0, LengthUnit.INCHES);
-        Length sum = QuantityMeasurementApp.demonstrateLengthAddition(length1, length2);
-
-        assertEquals(new Length(2.0, LengthUnit.FEET), sum);
-    }
-
-    @Test
-    public void testAddition_CrossUnit_InchesPlusFeet() {
-        // 12.0 inches + 1.0 feet = 24.0 inches [cite: 1915-1916]
-        Length inches = new Length(12.0, LengthUnit.INCHES);
-        Length feet = new Length(1.0, LengthUnit.FEET);
-        Length sum = inches.add(feet);
+        Length sum = length1.add(length2, LengthUnit.INCHES);
 
         assertEquals(new Length(24.0, LengthUnit.INCHES), sum);
     }
 
     @Test
-    public void testAddition_Commutativity() {
-        // a + b should have same numerical base value as b + a [cite: 1928-1931]
+    public void testAddition_ExplicitTargetUnit_Yards() {
+        // 1.0 FEET + 12.0 INCHES (Target YARDS) = 0.667 YARDS [cite: 2418]
         Length length1 = new Length(1.0, LengthUnit.FEET);
         Length length2 = new Length(12.0, LengthUnit.INCHES);
+        Length sum = length1.add(length2, LengthUnit.YARD);
 
-        Length sum1 = length1.add(length2); // 2.0 feet
-        Length sum2 = length2.add(length1); // 24.0 inches
-
-        assertTrue(QuantityMeasurementApp.demonstrateLengthEquality(sum1, sum2));
+        assertEquals(new Length(0.667, LengthUnit.YARD), sum);
     }
 
     @Test
-    public void testAddition_WithZero() {
-        // 5.0 feet + 0 inches = 5.0 feet [cite: 1885]
-        Length feet = new Length(5.0, LengthUnit.FEET);
-        Length zero = new Length(0.0, LengthUnit.INCHES);
-        assertEquals(feet, feet.add(zero));
+    public void testAddition_ExplicitTargetUnit_Commutativity() {
+        // Commutativity: add(A, B, Target) == add(B, A, Target) [cite: 2137, 2433]
+        Length length1 = new Length(1.0, LengthUnit.FEET);
+        Length length2 = new Length(12.0, LengthUnit.INCHES);
+        LengthUnit target = LengthUnit.YARD;
+
+        assertEquals(length1.add(length2, target), length2.add(length1, target));
     }
 
     @Test
-    public void testAddition_NegativeValues() {
-        // 5.0 feet + (-2.0) feet = 3.0 feet [cite: 1941]
-        Length l1 = new Length(5.0, LengthUnit.FEET);
-        Length l2 = new Length(-2.0, LengthUnit.FEET);
-        assertEquals(new Length(3.0, LengthUnit.FEET), l1.add(l2));
+    public void testAddition_ExplicitTargetUnit_NullTargetUnit() {
+        // Passing null targetUnit throws IllegalArgumentException [cite: 2382, 2461]
+        Length length1 = new Length(1.0, LengthUnit.FEET);
+        Length length2 = new Length(1.0, LengthUnit.FEET);
+        assertThrows(IllegalArgumentException.class, () -> length1.add(length2, null));
     }
 
     @Test
-    public void testAddition_NullOperand_ThrowsException() {
-        Length length = new Length(1.0, LengthUnit.FEET);
-        assertThrows(IllegalArgumentException.class, () -> length.add(null)); // [cite: 1945]
+    public void testAddition_SmallToLargeScale() {
+        // 12.0 INCHES + 12.0 INCHES (Target YARDS) = 0.667 YARDS [cite: 2471, 2473]
+        Length l1 = new Length(12.0, LengthUnit.INCHES);
+        Length l2 = new Length(12.0, LengthUnit.INCHES);
+        assertEquals(new Length(0.667, LengthUnit.YARD), l1.add(l2, LengthUnit.YARD));
     }
 }
