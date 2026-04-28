@@ -1,14 +1,12 @@
 package com.apps.quantitymeasurement;
 
-/**
- * Represents a length quantity. Focuses on value comparison and arithmetic,
- * delegating unit-specific conversion logic to the LengthUnit enum.
- */
-public class Length {
-    private final double value;
-    private final LengthUnit unit;
+import java.util.Objects;
 
-    public Length(double value, LengthUnit unit) {
+public class Weight {
+    private final double value;
+    private final WeightUnit unit;
+
+    public Weight(double value, WeightUnit unit) {
         if (!Double.isFinite(value)) {
             throw new IllegalArgumentException("Value must be a finite number");
         }
@@ -22,40 +20,35 @@ public class Length {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        // Category Type Safety: Ensures Length is only compared to other Length objects
+        // Category Type Safety: Ensures Weight can only be compared to Weight
         if (o == null || getClass() != o.getClass()) return false;
-        Length that = (Length) o;
-        // Delegates conversion to the unit class for base-unit comparison
+        Weight that = (Weight) o;
         return Double.compare(this.unit.convertToBaseUnit(this.value),
                 that.unit.convertToBaseUnit(that.value)) == 0;
     }
 
-    /**
-     * Returns a new Length instance converted to the target unit.
-     */
-    public Length convertTo(LengthUnit targetUnit) {
+    @Override
+    public int hashCode() {
+        return Objects.hash(unit.convertToBaseUnit(value));
+    }
+
+    public Weight convertTo(WeightUnit targetUnit) {
         if (targetUnit == null) throw new IllegalArgumentException("Target unit cannot be null");
         double baseValue = this.unit.convertToBaseUnit(this.value);
         double targetValue = targetUnit.convertFromBaseUnit(baseValue);
-        return new Length(targetValue, targetUnit);
+        return new Weight(targetValue, targetUnit);
     }
 
-    /**
-     * Adds another Length to this one, returning the result in a specified target unit.
-     */
-    public Length add(Length that, LengthUnit targetUnit) {
+    public Weight add(Weight that, WeightUnit targetUnit) {
         if (that == null || targetUnit == null) {
             throw new IllegalArgumentException("Operand and target unit cannot be null");
         }
         double totalBase = this.unit.convertToBaseUnit(this.value) +
                 that.unit.convertToBaseUnit(that.value);
-        return new Length(targetUnit.convertFromBaseUnit(totalBase), targetUnit);
+        return new Weight(targetUnit.convertFromBaseUnit(totalBase), targetUnit);
     }
 
-    /**
-     * Default addition: returns result in the unit of the first operand.
-     */
-    public Length add(Length that) {
+    public Weight add(Weight that) {
         return this.add(that, this.unit);
     }
 

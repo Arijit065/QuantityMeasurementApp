@@ -1,18 +1,15 @@
 package com.apps.quantitymeasurement;
 
-/**
- * LengthUnit enumeration defines various units of length measurement
- * along with their conversion factors relative to inches.
- */
-public enum LengthUnit {
-    FEET(12.0),
-    INCHES(1.0),
-    YARDS(36.0),
-    CENTIMETERS(0.393701);
+public enum WeightUnit {
+    MILLIGRAM(0.001),
+    GRAM(1.0),
+    KILOGRAM(1000.0),
+    POUND(453.592),
+    TONNE(1_000_000.0);
 
     private final double conversionFactor;
 
-    LengthUnit(double conversionFactor) {
+    WeightUnit(double conversionFactor) {
         this.conversionFactor = conversionFactor;
     }
 
@@ -20,17 +17,11 @@ public enum LengthUnit {
         return conversionFactor;
     }
 
-    /**
-     * Responsibility: Convert a value in this unit to the base unit (Inches).
-     */
     public double convertToBaseUnit(double value) {
         double result = value * this.conversionFactor;
         return Math.round(result * 1000.0) / 1000.0;
     }
 
-    /**
-     * Responsibility: Convert a base unit value (Inches) to this unit.
-     */
     public double convertFromBaseUnit(double baseValue) {
         double result = baseValue / this.conversionFactor;
         return Math.round(result * 1000.0) / 1000.0;
