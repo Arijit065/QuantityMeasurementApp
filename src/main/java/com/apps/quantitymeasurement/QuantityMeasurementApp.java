@@ -74,7 +74,6 @@ public class QuantityMeasurementApp {
         Length inches = new Length(12.0, LengthUnit.INCHES);
         System.out.println("Cross-Unit Equality (1.0ft == 12.0in): " + feet.equals(inches));
     }
-
     public static void main(String[] args) {
         demonstrateFeetEquality();
         demonstrateInchesEquality();

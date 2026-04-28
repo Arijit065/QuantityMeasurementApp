@@ -6,7 +6,6 @@ import com.apps.quantitymeasurement.QuantityMeasurementApp.Length;
 import com.apps.quantitymeasurement.QuantityMeasurementApp.LengthUnit;
 
 public class QuantityMeasurementAppTest {
-
     @Test
     public void testEquality_FeetToFeet_SameValue() {
         assertEquals(new Length(1.0, LengthUnit.FEET), new Length(1.0, LengthUnit.FEET));
