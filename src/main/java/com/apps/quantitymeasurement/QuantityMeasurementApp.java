@@ -2,17 +2,19 @@ package com.apps.quantitymeasurement;
 
 /**
  * QuantityMeasurementApp handles comparisons between different quantities.
- * UC3: Implements Generic Quantity Class for DRY Principle.
+ * UC4: Extends units to include Yards and Centimeters.
  */
 public class QuantityMeasurementApp {
 
     /**
-     * Enum to represent different length units and their conversion factors.
-     * Base unit is Inches (1.0) [cite: 473-475].
+     * Enum updated to include Yards and Centimeters[cite: 454].
+     * Base unit: Inches.
      */
     public enum LengthUnit {
         FEET(12.0),
-        INCHES(1.0);
+        INCHES(1.0),
+        YARD(36.0),        // 1 Yard = 3 Feet * 12 Inches [cite: 477]
+        CENTIMETER(0.4);   // 1 cm = 0.4 inches as per UC4 requirements
 
         private final double conversionFactor;
 
@@ -25,9 +27,6 @@ public class QuantityMeasurementApp {
         }
     }
 
-    /**
-     * Unified class to represent any length measurement.
-     */
     public static class Length {
         private final double value;
         private final LengthUnit unit;
@@ -37,9 +36,6 @@ public class QuantityMeasurementApp {
             this.unit = unit;
         }
 
-        /**
-         * Converts the current value to the base unit (Inches)[cite: 514].
-         */
         private double convertToBaseUnit() {
             return this.value * this.unit.getConversionFactor();
         }
@@ -49,34 +45,18 @@ public class QuantityMeasurementApp {
             if (this == obj) return true;
             if (obj == null || getClass() != obj.getClass()) return false;
             Length that = (Length) obj;
-            // Compare values after converting both to base unit (Inches) [cite: 456, 515]
             return Double.compare(this.convertToBaseUnit(), that.convertToBaseUnit()) == 0;
         }
     }
 
-    public static void demonstrateFeetEquality() {
-        Length feet1 = new Length(1.0, LengthUnit.FEET);
-        Length feet2 = new Length(1.0, LengthUnit.FEET);
-        System.out.println("Feet Equality (1.0ft == 1.0ft): " + feet1.equals(feet2));
-    }
-
-    public static void demonstrateInchesEquality() {
-        Length inch1 = new Length(1.0, LengthUnit.INCHES);
-        Length inch2 = new Length(1.0, LengthUnit.INCHES);
-        System.out.println("Inches Equality (1.0in == 1.0in): " + inch1.equals(inch2));
-    }
-
-    /**
-     * Demonstrates cross-unit comparison[cite: 597, 602].
-     */
-    public static void demonstrateFeetInchesComparison() {
-        Length feet = new Length(1.0, LengthUnit.FEET);
-        Length inches = new Length(12.0, LengthUnit.INCHES);
-        System.out.println("Cross-Unit Equality (1.0ft == 12.0in): " + feet.equals(inches));
-    }
     public static void main(String[] args) {
-        demonstrateFeetEquality();
-        demonstrateInchesEquality();
-        demonstrateFeetInchesComparison();
+        // Example demonstrations
+        Length threeFeet = new Length(3.0, LengthUnit.FEET);
+        Length oneYard = new Length(1.0, LengthUnit.YARD);
+        System.out.println("1 Yard == 3 Feet: " + oneYard.equals(threeFeet));
+
+        Length oneInch = new Length(1.0, LengthUnit.INCHES);
+        Length twoPointFiveCm = new Length(2.5, LengthUnit.CENTIMETER);
+        System.out.println("1 Inch == 2.5 CM: " + oneInch.equals(twoPointFiveCm));
     }
 }

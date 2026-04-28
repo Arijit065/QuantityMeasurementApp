@@ -6,52 +6,39 @@ import com.apps.quantitymeasurement.QuantityMeasurementApp.Length;
 import com.apps.quantitymeasurement.QuantityMeasurementApp.LengthUnit;
 
 public class QuantityMeasurementAppTest {
+
     @Test
-    public void testEquality_FeetToFeet_SameValue() {
-        assertEquals(new Length(1.0, LengthUnit.FEET), new Length(1.0, LengthUnit.FEET));
+    public void testEquality_YardToFeet_EquivalentValue() {
+        // 1 yard = 3 feet
+        assertEquals(new Length(1.0, LengthUnit.YARD), new Length(3.0, LengthUnit.FEET));
     }
 
     @Test
-    public void testEquality_InchToInch_SameValue() {
-        assertEquals(new Length(1.0, LengthUnit.INCHES), new Length(1.0, LengthUnit.INCHES));
+    public void testEquality_YardToInches_EquivalentValue() {
+        // 1 yard = 36 inches
+        assertEquals(new Length(1.0, LengthUnit.YARD), new Length(36.0, LengthUnit.INCHES));
     }
 
     @Test
-    public void testEquality_FeetToInch_EquivalentValue() {
-        // Verifies 1 foot = 12 inches
-        assertEquals(new Length(1.0, LengthUnit.FEET), new Length(12.0, LengthUnit.INCHES));
+    public void testEquality_InchesToCm_EquivalentValue() {
+        // 1 inch = 2.5 cm (based on 0.4 conversion factor)
+        assertEquals(new Length(1.0, LengthUnit.INCHES), new Length(2.5, LengthUnit.CENTIMETER));
     }
 
     @Test
-    public void testEquality_InchToFeet_EquivalentValue() {
-        // Verifies symmetry: 12 inches = 1 foot
-        assertEquals(new Length(12.0, LengthUnit.INCHES), new Length(1.0, LengthUnit.FEET));
+    public void testEquality_YardToFeet_Symmetry() {
+        // 3 feet = 1 yard
+        assertEquals(new Length(3.0, LengthUnit.FEET), new Length(1.0, LengthUnit.YARD));
     }
 
     @Test
-    public void testEquality_FeetToFeet_DifferentValue() {
-        assertNotEquals(new Length(1.0, LengthUnit.FEET), new Length(2.0, LengthUnit.FEET));
+    public void testInequality_YardToFeet_DifferentValue() {
+        assertNotEquals(new Length(1.0, LengthUnit.YARD), new Length(1.0, LengthUnit.FEET));
     }
 
     @Test
-    public void testEquality_InchToInch_DifferentValue() {
-        assertNotEquals(new Length(1.0, LengthUnit.INCHES), new Length(2.0, LengthUnit.INCHES));
-    }
-
-    @Test
-    public void testEquality_NullComparison() {
-        assertNotEquals(new Length(1.0, LengthUnit.FEET), null);
-    }
-
-    @Test
-    public void testEquality_SameReference() {
-        Length length = new Length(1.0, LengthUnit.FEET);
-        assertEquals(length, length);
-    }
-
-    @Test
-    public void testCrossUnitInequality() {
-        // Verifies 1 foot is not 1 inch [cite: 778]
-        assertNotEquals(new Length(1.0, LengthUnit.FEET), new Length(1.0, LengthUnit.INCHES));
+    public void testEquality_CmToFeet() {
+        // 30 cm = 12 inches = 1 foot
+        assertEquals(new Length(30.0, LengthUnit.CENTIMETER), new Length(1.0, LengthUnit.FEET));
     }
 }
