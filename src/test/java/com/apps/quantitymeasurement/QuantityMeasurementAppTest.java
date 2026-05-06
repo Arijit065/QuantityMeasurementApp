@@ -16,22 +16,45 @@ public class QuantityMeasurementAppTest {
     }
 
     @Test
-    void shouldConvertYardToFeet() {
+    void shouldAddFeetAndInches() {
 
-        Length yard = new Length(1.0, LengthUnit.YARD);
+        Length feet = new Length(1.0, LengthUnit.FEET);
+        Length inch = new Length(12.0, LengthUnit.INCH);
 
-        assertEquals(3.0,
-                yard.convertTo(LengthUnit.FEET));
+        Length result = feet.add(inch);
+
+        assertEquals(
+                new Length(2.0, LengthUnit.FEET),
+                result
+        );
     }
 
     @Test
-    void shouldConvertCmToInch() {
+    void shouldAddYardAndFeet() {
+
+        Length yard = new Length(1.0, LengthUnit.YARD);
+        Length feet = new Length(3.0, LengthUnit.FEET);
+
+        Length result = yard.add(feet);
+
+        assertEquals(
+                new Length(2.0, LengthUnit.YARD),
+                result
+        );
+    }
+
+    @Test
+    void shouldAddCmAndInch() {
 
         Length cm = new Length(2.54, LengthUnit.CM);
+        Length inch = new Length(1.0, LengthUnit.INCH);
 
-        assertEquals(1.0,
-                cm.convertTo(LengthUnit.INCH),
-                0.01);
+        Length result = cm.add(inch);
+
+        assertEquals(
+                new Length(5.08, LengthUnit.CM),
+                result
+        );
     }
 
     @Test
