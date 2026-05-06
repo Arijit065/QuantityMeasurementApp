@@ -1,74 +1,60 @@
-package com.apps.quantitymeasurement;
+@Test
+void shouldReturnTrueForKgAndGramEquality() {
 
-import org.junit.jupiter.api.Test;
+    Weight kg = new Weight(1.0, WeightUnit.KG);
+    Weight gram = new Weight(1000.0, WeightUnit.G);
 
-import static org.junit.jupiter.api.Assertions.*;
+    assertEquals(kg, gram);
+}
 
-public class QuantityMeasurementAppTest {
+@Test
+void shouldConvertKgToGram() {
 
-    @Test
-    void shouldAddFeetAndInchesInFeet() {
+    Weight kg = new Weight(1.0, WeightUnit.KG);
 
-        Length feet = new Length(1.0, LengthUnit.FEET);
-        Length inch = new Length(12.0, LengthUnit.INCH);
+    assertEquals(
+            1000.0,
+            kg.convertTo(WeightUnit.G)
+    );
+}
 
-        Length result = feet.add(inch);
+@Test
+void shouldConvertPoundToKg() {
 
-        assertEquals(
-                new Length(2.0, LengthUnit.FEET),
-                result
-        );
-    }
+    Weight pound = new Weight(1.0, WeightUnit.LB);
 
-    @Test
-    void shouldAddFeetAndInchesInYards() {
+    assertEquals(
+            0.453592,
+            pound.convertTo(WeightUnit.KG),
+            0.0001
+    );
+}
 
-        Length feet = new Length(1.0, LengthUnit.FEET);
-        Length inch = new Length(12.0, LengthUnit.INCH);
+@Test
+void shouldAddKgAndGram() {
 
-        Length result =
-                feet.add(inch, LengthUnit.YARD);
+    Weight kg = new Weight(1.0, WeightUnit.KG);
+    Weight gram = new Weight(1000.0, WeightUnit.G);
 
-        assertEquals(
-                new Length(0.6666666667,
-                        LengthUnit.YARD),
-                result
-        );
-    }
+    Weight result = kg.add(gram);
 
-    @Test
-    void shouldAddYardAndFeetInInches() {
+    assertEquals(
+            new Weight(2.0, WeightUnit.KG),
+            result
+    );
+}
 
-        Length yard = new Length(1.0, LengthUnit.YARD);
-        Length feet = new Length(3.0, LengthUnit.FEET);
+@Test
+void shouldAddWeightsInTargetUnit() {
 
-        Length result =
-                yard.add(feet, LengthUnit.INCH);
+    Weight kg = new Weight(1.0, WeightUnit.KG);
+    Weight gram = new Weight(1000.0, WeightUnit.G);
 
-        assertEquals(
-                new Length(72.0,
-                        LengthUnit.INCH),
-                result
-        );
-    }
+    Weight result =
+            kg.add(gram, WeightUnit.G);
 
-    @Test
-    void shouldConvertFeetToInches() {
-
-        Length feet = new Length(1.0, LengthUnit.FEET);
-
-        assertEquals(
-                12.0,
-                feet.convertTo(LengthUnit.INCH)
-        );
-    }
-
-    @Test
-    void shouldReturnTrueForFeetAndInchEquality() {
-
-        Length feet = new Length(1.0, LengthUnit.FEET);
-        Length inch = new Length(12.0, LengthUnit.INCH);
-
-        assertEquals(feet, inch);
-    }
+    assertEquals(
+            new Weight(2000.0, WeightUnit.G),
+            result
+    );
 }
