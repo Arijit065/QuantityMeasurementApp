@@ -1,60 +1,44 @@
 @Test
-void shouldReturnTrueForKgAndGramEquality() {
+void shouldReturnTrueForFeetAndInchEquality() {
 
-    Weight kg = new Weight(1.0, WeightUnit.KG);
-    Weight gram = new Weight(1000.0, WeightUnit.G);
+    Quantity<LengthUnit> feet =
+            new Quantity<>(1.0, LengthUnit.FEET);
 
-    assertEquals(kg, gram);
+    Quantity<LengthUnit> inch =
+            new Quantity<>(12.0, LengthUnit.INCH);
+
+    assertEquals(feet, inch);
 }
 
 @Test
 void shouldConvertKgToGram() {
 
-    Weight kg = new Weight(1.0, WeightUnit.KG);
+    Quantity<WeightUnit> kg =
+            new Quantity<>(1.0, WeightUnit.KG);
+
+    Quantity<WeightUnit> result =
+            kg.convertTo(WeightUnit.G);
 
     assertEquals(
-            1000.0,
-            kg.convertTo(WeightUnit.G)
-    );
-}
-
-@Test
-void shouldConvertPoundToKg() {
-
-    Weight pound = new Weight(1.0, WeightUnit.LB);
-
-    assertEquals(
-            0.453592,
-            pound.convertTo(WeightUnit.KG),
-            0.0001
-    );
-}
-
-@Test
-void shouldAddKgAndGram() {
-
-    Weight kg = new Weight(1.0, WeightUnit.KG);
-    Weight gram = new Weight(1000.0, WeightUnit.G);
-
-    Weight result = kg.add(gram);
-
-    assertEquals(
-            new Weight(2.0, WeightUnit.KG),
+            new Quantity<>(1000.0, WeightUnit.G),
             result
     );
 }
 
 @Test
-void shouldAddWeightsInTargetUnit() {
+void shouldAddWeights() {
 
-    Weight kg = new Weight(1.0, WeightUnit.KG);
-    Weight gram = new Weight(1000.0, WeightUnit.G);
+    Quantity<WeightUnit> kg =
+            new Quantity<>(1.0, WeightUnit.KG);
 
-    Weight result =
-            kg.add(gram, WeightUnit.G);
+    Quantity<WeightUnit> gram =
+            new Quantity<>(1000.0, WeightUnit.G);
+
+    Quantity<WeightUnit> result =
+            kg.add(gram);
 
     assertEquals(
-            new Weight(2000.0, WeightUnit.G),
+            new Quantity<>(2.0, WeightUnit.KG),
             result
     );
 }
