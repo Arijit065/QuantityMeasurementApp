@@ -1,90 +1,41 @@
-package com.apps.quantitymeasurement;
+public Quantity<U> subtract(Quantity<U> other) {
 
-public class Quantity<U extends IMeasurable> {
+    double baseResult =
+            this.toBaseUnit() - other.toBaseUnit();
 
-    private final double value;
-    private final U unit;
+    double convertedValue =
+            this.unit.convertFromBaseUnit(baseResult);
 
-    public Quantity(double value, U unit) {
+    convertedValue =
+            Math.round(convertedValue * 100.0) / 100.0;
 
-        if (!Double.isFinite(value))
-            throw new IllegalArgumentException("Invalid value");
+    return new Quantity<>(convertedValue, this.unit);
+}
 
-        if (unit == null)
-            throw new IllegalArgumentException("Unit cannot be null");
+public Quantity<U> subtract(
+        Quantity<U> other,
+        U targetUnit) {
 
-        this.value = value;
-        this.unit = unit;
-    }
+    double baseResult =
+            this.toBaseUnit() - other.toBaseUnit();
 
-    private double toBaseUnit() {
-        return unit.convertToBaseUnit(value);
-    }
+    double convertedValue =
+            targetUnit.convertFromBaseUnit(baseResult);
 
-    public Quantity<U> convertTo(U targetUnit) {
+    convertedValue =
+            Math.round(convertedValue * 100.0) / 100.0;
 
-        double baseValue = this.toBaseUnit();
+    return new Quantity<>(convertedValue, targetUnit);
+}
 
-        double convertedValue =
-                targetUnit.convertFromBaseUnit(baseValue);
+public double divide(Quantity<U> other) {
 
-        convertedValue =
-                Math.round(convertedValue * 100.0) / 100.0;
+    if (other.toBaseUnit() == 0)
+        throw new ArithmeticException(
+                "Cannot divide by zero");
 
-        return new Quantity<>(convertedValue, targetUnit);
-    }
+    double result =
+            this.toBaseUnit() / other.toBaseUnit();
 
-    public Quantity<U> add(Quantity<U> other) {
-
-        double totalBaseValue =
-                this.toBaseUnit() + other.toBaseUnit();
-
-        double convertedValue =
-                this.unit.convertFromBaseUnit(totalBaseValue);
-
-        return new Quantity<>(convertedValue, this.unit);
-    }
-
-    public Quantity<U> add(
-            Quantity<U> other,
-            U targetUnit) {
-
-        double totalBaseValue =
-                this.toBaseUnit() + other.toBaseUnit();
-
-        double convertedValue =
-                targetUnit.convertFromBaseUnit(totalBaseValue);
-
-        return new Quantity<>(convertedValue, targetUnit);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-
-        if (this == obj)
-            return true;
-
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-
-        Quantity<?> other = (Quantity<?>) obj;
-
-        if (this.unit.getClass() != other.unit.getClass())
-            return false;
-
-        return Double.compare(
-                this.toBaseUnit(),
-                other.toBaseUnit()
-        ) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return Double.hashCode(toBaseUnit());
-    }
-
-    @Override
-    public String toString() {
-        return value + " " + unit.getUnitName();
-    }
+    return Math.round(result * 100.0) / 100.0;
 }
