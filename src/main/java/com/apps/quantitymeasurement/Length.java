@@ -1,66 +1,33 @@
 package com.apps.quantitymeasurement;
 
-/**
- * Represents a length quantity. Focuses on value comparison and arithmetic,
- * delegating unit-specific conversion logic to the LengthUnit enum.
- */
 public class Length {
+
     private final double value;
     private final LengthUnit unit;
 
     public Length(double value, LengthUnit unit) {
-        if (!Double.isFinite(value)) {
-            throw new IllegalArgumentException("Value must be a finite number");
-        }
-        if (unit == null) {
-            throw new IllegalArgumentException("Unit cannot be null");
-        }
         this.value = value;
         this.unit = unit;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        // Category Type Safety: Ensures Length is only compared to other Length objects
-        if (o == null || getClass() != o.getClass()) return false;
-        Length that = (Length) o;
-        // Delegates conversion to the unit class for base-unit comparison
-        return Double.compare(this.unit.convertToBaseUnit(this.value),
-                that.unit.convertToBaseUnit(that.value)) == 0;
-    }
-
-    /**
-     * Returns a new Length instance converted to the target unit.
-     */
-    public Length convertTo(LengthUnit targetUnit) {
-        if (targetUnit == null) throw new IllegalArgumentException("Target unit cannot be null");
-        double baseValue = this.unit.convertToBaseUnit(this.value);
-        double targetValue = targetUnit.convertFromBaseUnit(baseValue);
-        return new Length(targetValue, targetUnit);
-    }
-
-    /**
-     * Adds another Length to this one, returning the result in a specified target unit.
-     */
-    public Length add(Length that, LengthUnit targetUnit) {
-        if (that == null || targetUnit == null) {
-            throw new IllegalArgumentException("Operand and target unit cannot be null");
-        }
-        double totalBase = this.unit.convertToBaseUnit(this.value) +
-                that.unit.convertToBaseUnit(that.value);
-        return new Length(targetUnit.convertFromBaseUnit(totalBase), targetUnit);
-    }
-
-    /**
-     * Default addition: returns result in the unit of the first operand.
-     */
-    public Length add(Length that) {
-        return this.add(that, this.unit);
+    private double toBaseUnit() {
+        return unit.toBaseUnit(value);
     }
 
     @Override
-    public String toString() {
-        return String.format("%.3f %s", value, unit);
+    public boolean equals(Object obj) {
+
+        if (this == obj)
+            return true;
+
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+
+        Length other = (Length) obj;
+
+        return Double.compare(
+                this.toBaseUnit(),
+                other.toBaseUnit()
+        ) == 0;
     }
 }

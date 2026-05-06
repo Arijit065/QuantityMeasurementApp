@@ -1,14 +1,9 @@
 package com.apps.quantitymeasurement;
 
-/**
- * LengthUnit enumeration defines various units of length measurement
- * along with their conversion factors relative to inches.
- */
 public enum LengthUnit {
+
     FEET(12.0),
-    INCHES(1.0),
-    YARDS(36.0),
-    CENTIMETERS(0.393701);
+    INCH(1.0);
 
     private final double conversionFactor;
 
@@ -16,23 +11,23 @@ public enum LengthUnit {
         this.conversionFactor = conversionFactor;
     }
 
-    public double getConversionFactor() {
-        return conversionFactor;
+    public double toBaseUnit(double value) {
+        return value * conversionFactor;
+    }
+}package com.apps.quantitymeasurement;
+
+public enum LengthUnit {
+
+    FEET(12.0),
+    INCH(1.0);
+
+    private final double conversionFactor;
+
+    LengthUnit(double conversionFactor) {
+        this.conversionFactor = conversionFactor;
     }
 
-    /**
-     * Responsibility: Convert a value in this unit to the base unit (Inches).
-     */
-    public double convertToBaseUnit(double value) {
-        double result = value * this.conversionFactor;
-        return Math.round(result * 1000.0) / 1000.0;
-    }
-
-    /**
-     * Responsibility: Convert a base unit value (Inches) to this unit.
-     */
-    public double convertFromBaseUnit(double baseValue) {
-        double result = baseValue / this.conversionFactor;
-        return Math.round(result * 1000.0) / 1000.0;
+    public double toBaseUnit(double value) {
+        return value * conversionFactor;
     }
 }
