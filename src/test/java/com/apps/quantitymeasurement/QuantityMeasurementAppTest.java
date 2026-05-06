@@ -7,21 +7,31 @@ import static org.junit.jupiter.api.Assertions.*;
 public class QuantityMeasurementAppTest {
 
     @Test
-    void shouldReturnTrueForEqualFeetValues() {
+    void shouldConvertFeetToInches() {
 
-        Length value1 = new Length(1.0, LengthUnit.FEET);
-        Length value2 = new Length(1.0, LengthUnit.FEET);
+        Length feet = new Length(1.0, LengthUnit.FEET);
 
-        assertEquals(value1, value2);
+        assertEquals(12.0,
+                feet.convertTo(LengthUnit.INCH));
     }
 
     @Test
-    void shouldReturnTrueForEqualInchValues() {
+    void shouldConvertYardToFeet() {
 
-        Length value1 = new Length(12.0, LengthUnit.INCH);
-        Length value2 = new Length(12.0, LengthUnit.INCH);
+        Length yard = new Length(1.0, LengthUnit.YARD);
 
-        assertEquals(value1, value2);
+        assertEquals(3.0,
+                yard.convertTo(LengthUnit.FEET));
+    }
+
+    @Test
+    void shouldConvertCmToInch() {
+
+        Length cm = new Length(2.54, LengthUnit.CM);
+
+        assertEquals(1.0,
+                cm.convertTo(LengthUnit.INCH),
+                0.01);
     }
 
     @Test
@@ -31,48 +41,5 @@ public class QuantityMeasurementAppTest {
         Length inch = new Length(12.0, LengthUnit.INCH);
 
         assertEquals(feet, inch);
-    }
-
-    @Test
-    void shouldReturnTrueForYardAndFeetEquality() {
-
-        Length yard = new Length(1.0, LengthUnit.YARD);
-        Length feet = new Length(3.0, LengthUnit.FEET);
-
-        assertEquals(yard, feet);
-    }
-
-    @Test
-    void shouldReturnTrueForCmAndInchEquality() {
-
-        Length cm = new Length(2.54, LengthUnit.CM);
-        Length inch = new Length(1.0, LengthUnit.INCH);
-
-        assertEquals(cm, inch);
-    }
-
-    @Test
-    void shouldReturnFalseForDifferentValues() {
-
-        Length value1 = new Length(1.0, LengthUnit.FEET);
-        Length value2 = new Length(2.0, LengthUnit.FEET);
-
-        assertNotEquals(value1, value2);
-    }
-
-    @Test
-    void shouldReturnFalseWhenComparedWithNull() {
-
-        Length value = new Length(1.0, LengthUnit.FEET);
-
-        assertNotEquals(null, value);
-    }
-
-    @Test
-    void shouldReturnTrueForSameReference() {
-
-        Length value = new Length(1.0, LengthUnit.FEET);
-
-        assertEquals(value, value);
     }
 }

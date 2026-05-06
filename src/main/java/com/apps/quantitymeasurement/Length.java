@@ -14,6 +14,13 @@ public class Length {
         return unit.toBaseUnit(value);
     }
 
+    public double convertTo(LengthUnit targetUnit) {
+
+        double baseValue = this.toBaseUnit();
+
+        return baseValue / targetUnit.getConversionFactor();
+    }
+
     @Override
     public boolean equals(Object obj) {
 
