@@ -11,14 +11,14 @@ public class Length {
     }
 
     private double toBaseUnit() {
-        return unit.toBaseUnit(value);
+        return unit.convertToBaseUnit(value);
     }
 
     public double convertTo(LengthUnit targetUnit) {
 
         double baseValue = this.toBaseUnit();
 
-        return baseValue / targetUnit.getConversionFactor();
+        return targetUnit.convertFromBaseUnit(baseValue);
     }
 
     public Length add(Length other) {
@@ -27,7 +27,7 @@ public class Length {
                 this.toBaseUnit() + other.toBaseUnit();
 
         double convertedValue =
-                totalBaseValue / this.unit.getConversionFactor();
+                this.unit.convertFromBaseUnit(totalBaseValue);
 
         return new Length(convertedValue, this.unit);
     }
@@ -39,8 +39,7 @@ public class Length {
                 this.toBaseUnit() + other.toBaseUnit();
 
         double convertedValue =
-                totalBaseValue /
-                targetUnit.getConversionFactor();
+                targetUnit.convertFromBaseUnit(totalBaseValue);
 
         return new Length(convertedValue, targetUnit);
     }

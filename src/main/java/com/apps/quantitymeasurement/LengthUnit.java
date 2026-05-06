@@ -13,11 +13,11 @@ public enum LengthUnit {
         this.conversionFactor = conversionFactor;
     }
 
-    public double toBaseUnit(double value) {
+    public double convertToBaseUnit(double value) {
         return value * conversionFactor;
     }
 
-    public double getConversionFactor() {
-        return conversionFactor;
+    public double convertFromBaseUnit(double baseValue) {
+        return baseValue / conversionFactor;
     }
 }
