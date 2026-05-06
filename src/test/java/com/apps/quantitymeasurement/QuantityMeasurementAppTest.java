@@ -7,16 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class QuantityMeasurementAppTest {
 
     @Test
-    void shouldConvertFeetToInches() {
-
-        Length feet = new Length(1.0, LengthUnit.FEET);
-
-        assertEquals(12.0,
-                feet.convertTo(LengthUnit.INCH));
-    }
-
-    @Test
-    void shouldAddFeetAndInches() {
+    void shouldAddFeetAndInchesInFeet() {
 
         Length feet = new Length(1.0, LengthUnit.FEET);
         Length inch = new Length(12.0, LengthUnit.INCH);
@@ -30,30 +21,45 @@ public class QuantityMeasurementAppTest {
     }
 
     @Test
-    void shouldAddYardAndFeet() {
+    void shouldAddFeetAndInchesInYards() {
 
-        Length yard = new Length(1.0, LengthUnit.YARD);
-        Length feet = new Length(3.0, LengthUnit.FEET);
+        Length feet = new Length(1.0, LengthUnit.FEET);
+        Length inch = new Length(12.0, LengthUnit.INCH);
 
-        Length result = yard.add(feet);
+        Length result =
+                feet.add(inch, LengthUnit.YARD);
 
         assertEquals(
-                new Length(2.0, LengthUnit.YARD),
+                new Length(0.6666666667,
+                        LengthUnit.YARD),
                 result
         );
     }
 
     @Test
-    void shouldAddCmAndInch() {
+    void shouldAddYardAndFeetInInches() {
 
-        Length cm = new Length(2.54, LengthUnit.CM);
-        Length inch = new Length(1.0, LengthUnit.INCH);
+        Length yard = new Length(1.0, LengthUnit.YARD);
+        Length feet = new Length(3.0, LengthUnit.FEET);
 
-        Length result = cm.add(inch);
+        Length result =
+                yard.add(feet, LengthUnit.INCH);
 
         assertEquals(
-                new Length(5.08, LengthUnit.CM),
+                new Length(72.0,
+                        LengthUnit.INCH),
                 result
+        );
+    }
+
+    @Test
+    void shouldConvertFeetToInches() {
+
+        Length feet = new Length(1.0, LengthUnit.FEET);
+
+        assertEquals(
+                12.0,
+                feet.convertTo(LengthUnit.INCH)
         );
     }
 

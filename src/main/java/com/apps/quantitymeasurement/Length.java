@@ -32,6 +32,19 @@ public class Length {
         return new Length(convertedValue, this.unit);
     }
 
+    public Length add(Length other,
+                      LengthUnit targetUnit) {
+
+        double totalBaseValue =
+                this.toBaseUnit() + other.toBaseUnit();
+
+        double convertedValue =
+                totalBaseValue /
+                targetUnit.getConversionFactor();
+
+        return new Length(convertedValue, targetUnit);
+    }
+
     @Override
     public boolean equals(Object obj) {
 
