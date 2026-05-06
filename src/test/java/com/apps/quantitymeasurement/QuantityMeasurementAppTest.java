@@ -34,6 +34,24 @@ public class QuantityMeasurementAppTest {
     }
 
     @Test
+    void shouldReturnTrueForYardAndFeetEquality() {
+
+        Length yard = new Length(1.0, LengthUnit.YARD);
+        Length feet = new Length(3.0, LengthUnit.FEET);
+
+        assertEquals(yard, feet);
+    }
+
+    @Test
+    void shouldReturnTrueForCmAndInchEquality() {
+
+        Length cm = new Length(2.54, LengthUnit.CM);
+        Length inch = new Length(1.0, LengthUnit.INCH);
+
+        assertEquals(cm, inch);
+    }
+
+    @Test
     void shouldReturnFalseForDifferentValues() {
 
         Length value1 = new Length(1.0, LengthUnit.FEET);
